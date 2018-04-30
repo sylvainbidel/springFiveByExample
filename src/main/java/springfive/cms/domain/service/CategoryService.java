@@ -2,6 +2,8 @@ package springfive.cms.domain.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import springfive.cms.domain.models.Category;
 import springfive.cms.domain.repository.CategoryRepository;
 import springfive.cms.domain.vo.CategoryRequest;
@@ -18,27 +20,32 @@ public class CategoryService {
     this.categoryRepository = categoryRepository;
   }
 
-  public Category update(Category category){
-    return this.categoryRepository.save(category);
+  public Mono<Category> update(String id,CategoryRequest category)
+  {
+
+    return this.categoryRepository.findById(id).flatMap(c->{
+      c.setName(category.getName());
+      return this.categoryRepository.save(c);
+    });
   }
 
-  public Category create(CategoryRequest request){
+  public Mono<Category> create(CategoryRequest request){
     Category category = new Category();
     category.setName(request.getName());
     return this.categoryRepository.save(category);
   }
 
   public void delete(String id){
-    final Category category = this.categoryRepository.findOne(id);
-    this.categoryRepository.delete(category);
+
+    this.categoryRepository.deleteById(id);
   }
 
-  public List<Category> findAll(){
+  public Flux<Category> findAll(){
     return this.categoryRepository.findAll();
   }
 
-  public Category findOne(String id){
-    return this.categoryRepository.findOne(id);
+  public Mono<Category> findOne(String id){
+    return this.categoryRepository.findById(id);
   }
 
 }
