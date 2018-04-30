@@ -4,3 +4,6 @@ spring:
       database: cms
       host: localhost
       port: 27017
+server:
+  port: 8082
+
